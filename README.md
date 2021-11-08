@@ -1,6 +1,4 @@
 # CRUD_CSharp_API
-Crud desenvolvido como challenge pessoal.
-
 
 First execute this script in MySQL Server
 
