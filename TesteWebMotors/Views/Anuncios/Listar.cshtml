@@ -1,0 +1,41 @@
+﻿@{ 
+    var anuncios = ViewBag.anuncios;
+}
+
+<h3>Listar</h3>
+<hr />
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Marca</th>
+            <th scope="col">Modelo</th>
+            <th scope="col">Versao</th>
+            <th scope="col">Ano</th>
+            <th scope="col">Quilometragem</th>
+            <th scope="col">Obs</th>
+            <th scope="col" width="110px">
+                <i class="icon-cogs"></i>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var anuncio in anuncios)
+        {
+            <tr>
+                <th scope="row">@anuncio.ID</th>
+                <td>@anuncio.marca</td>
+                <td>@anuncio.modelo</td>
+                <td>@anuncio.versao</td>
+                <td>@anuncio.ano</td>
+                <td>@anuncio.quilometragem</td>
+                <td>@anuncio.observacao</td>
+                <td>
+                    <a href="/Anuncios/EditarAnuncio?id=@anuncio.ID" class="btn btn-dark"><i class="icon-pencil"></i></a>
+                    <a href="/Anuncios/RemoverAnuncio?id=@anuncio.ID" class="btn btn-danger"><i class="icon-remove"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

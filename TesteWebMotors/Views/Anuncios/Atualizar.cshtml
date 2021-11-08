@@ -1,0 +1,121 @@
+﻿<h3>Incluir</h3>
+<hr />
+<div class="container">
+    <form class="row" method="post" action="/Anuncios/AtualizarAnuncio" enctype="multipart/form-data">
+        <div class="form-group col-md-3 col-sm-12">
+            <label for="formGroupExampleInput">Marca</label>
+            <select id="makes" class="form-control custom-select" name="marca" onchange="loadModels()" required>
+                <option value="@ViewBag.anuncio.marca">@ViewBag.anuncio.marca</option>
+            </select>
+        </div>
+        <div class="form-group col-md-3 col-sm-12">
+            <label for="formGroupExampleInput2">Modelo</label>
+            <select id="models" class="form-control custom-select" name="modelo" onchange="loadVersions()" required>
+                <option value="@ViewBag.anuncio.modelo">@ViewBag.anuncio.modelo</option>
+            </select>
+        </div>
+        <div class="form-group col-md-3 col-sm-12">
+            <label for="formGroupExampleInput2">Versão</label>
+            <select id="versions" class="form-control custom-select" name="versao" required>
+                <option value="@ViewBag.anuncio.versao">@ViewBag.anuncio.versao</option>
+            </select>
+        </div>
+        <div class="form-group col-md-1 col-sm-12">
+            <label for="formGroupExampleInput2">Ano</label>
+            <input type="text" class="form-control" name="ano" id="ano" placeholder="Ano" value="@ViewBag.anuncio.ano">
+            <input type="text" class="form-control d-none" name="id" id="id" placeholder="Ano" value="@ViewBag.anuncio.ID">
+        </div>
+        <div class="form-group col-md-2 col-sm-12">
+            <label for="formGroupExampleInput2">Quilometragem</label>
+            <input type="text" class="form-control" name="quilometragem" id="quilometragem" placeholder="Quilometragem" value="@ViewBag.anuncio.quilometragem">
+        </div>
+        <div class="form-group col-md-12 col-sm-12">
+            <label for="formGroupExampleInput2">Observação</label>
+            <textarea class="form-control" rows="4" name="observacao">@ViewBag.anuncio.observacao</textarea>
+        </div>
+        <div class="form-group col-md-12">
+            <button type="submit" class="btn btn-success float-right">Salvar</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts
+{
+    <script>
+        var marks = [];
+        var models = [];
+        var versions = [];
+
+        function loadMarks() {
+            let combo = document.getElementById('makes');
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', '/Recursos/Marcas');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    let response = JSON.parse(xhr.responseText);
+
+                    response.forEach(marcas => {
+                        marks.push(marcas);
+                        combo.innerHTML += `<option value="${marcas.Name}">${marcas.Name}</option>`;
+                    });
+                }
+            };
+            xhr.send();
+        }
+
+        function loadModels() {
+            let name = document.getElementById('makes').value;
+            let marca = marks.find((item) => {return item.Name == name;} );
+            resetCombos();
+            if (marca) {
+                let combo = document.getElementById('models');
+                let xhr = new XMLHttpRequest();
+                xhr.open('POST', '/Recursos/Modelos');
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        let response = JSON.parse(xhr.responseText);
+
+                        response.forEach(modelos => {
+                            models.push(modelos);
+                            combo.innerHTML += `<option value="${modelos.Name}">${modelos.Name}</option>`;
+                        });
+                    }
+                };
+
+                xhr.send(`idMarca=${marca.ID}`);
+            }
+        }
+
+        function loadVersions() {
+            let name = document.getElementById('models').value;
+            let modelo = models.find((item) => { return item.Name == name; });
+
+            if (modelo) {
+                let combo = document.getElementById('versions');
+                let xhr = new XMLHttpRequest();
+                xhr.open('POST', '/Recursos/Versoes');
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        let response = JSON.parse(xhr.responseText);
+
+                        response.forEach(versoes => {
+                            versions.push(versoes);
+                            combo.innerHTML += `<option value="${versoes.Name}">${versoes.Name}</option>`;
+                        });
+                    }
+                };
+                xhr.send(`idModelo=${modelo.ID}`);
+            }
+        }
+
+        function resetCombos() {
+            document.getElementById('models').innerHTML = `<option value="">Selecione...</option>`;
+            document.getElementById('versions').innerHTML = `<option value="">Selecione...</option>`;
+        }
+
+        loadMarks();
+
+    </script>
+}
